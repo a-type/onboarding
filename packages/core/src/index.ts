@@ -6,7 +6,13 @@ type StringTuple = readonly string[];
 export type Onboarding<Steps extends StringTuple> = {
 	useBegin: () => () => void;
 	useSkip: () => () => void;
-	useStep: (name: Steps[number]) => {
+	useStep: (
+		name: Steps[number],
+		options?: {
+			disableNextOnUnmount?: boolean;
+			uniqueKey?: string;
+		},
+	) => {
 		show: boolean;
 		next: () => void;
 		previous: () => void;
@@ -69,19 +75,39 @@ export function createOnboarding<Steps extends StringTuple>(
 
 	const stepClaims: Record<string, string> = {};
 
-	function useStep(name: Steps[number], disableNextOnUnmount = false) {
-		// a unique ID for this invocation of this hook. useful if there
-		// are multiple mounted components using this same hook and name.
+	function useStep(
+		name: Steps[number],
+		options?: {
+			/**
+			 * Specify a unique key and only one copy of this hook with that key
+			 * will receive show=true. This is useful if you have onboarding UI
+			 * rendered in a component that may be shown multiple times and you
+			 * only want it to display in the first instance.
+			 */
+			uniqueKey?: string;
+			/**
+			 * Normally when a component rendering this hook is unmounted,
+			 * the onboarding auto-advances. You can disable this.
+			 */
+			disableNextOnUnmount?: boolean;
+		},
+	) {
+		// a unique ID for this particular invocation of this hook.
 		const id = useId();
-		const hasClaim = stepClaims[name] === id;
+
+		const uniqueKey = options?.uniqueKey;
+		const hasClaim =
+			!options?.uniqueKey || stepClaims[options.uniqueKey] === id;
+
 		useEffect(() => {
-			if (!stepClaims[name]) {
-				stepClaims[name] = id;
+			if (!uniqueKey) return;
+			if (!stepClaims[uniqueKey]) {
+				stepClaims[uniqueKey] = id;
 				return () => {
-					delete stepClaims[name];
+					delete stepClaims[uniqueKey];
 				};
 			}
-		}, [id]);
+		}, [id, uniqueKey]);
 
 		const active = useSnapshot(state).active;
 
@@ -113,7 +139,7 @@ export function createOnboarding<Steps extends StringTuple>(
 
 			stepUnmounted[name] = false;
 
-			if (disableNextOnUnmount) {
+			if (options?.disableNextOnUnmount) {
 				return;
 			}
 

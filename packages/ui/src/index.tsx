@@ -8,6 +8,7 @@ export interface OnboardingBannerProps<O extends Onboarding<any>> {
 	children: ReactNode;
 	className?: string;
 	disableNext?: boolean;
+	uniqueKey?: string;
 }
 
 export function OnboardingBanner<O extends Onboarding<any>>({
@@ -16,8 +17,11 @@ export function OnboardingBanner<O extends Onboarding<any>>({
 	children,
 	className,
 	disableNext,
+	uniqueKey,
 }: OnboardingBannerProps<O>) {
-	const { show, next, isLast, isOnly } = onboarding.useStep(step);
+	const { show, next, isLast, isOnly } = onboarding.useStep(step, {
+		uniqueKey,
+	});
 
 	return (
 		<Collapsible
@@ -47,6 +51,7 @@ export interface OnboardingTooltipProps<O extends Onboarding<any>> {
 	className?: string;
 	disableNext?: boolean;
 	content: ReactNode;
+	uniqueKey?: string;
 	/** Pass a filter to ignore interactions for auto-next */
 	ignoreOutsideInteraction?: (target: HTMLElement) => boolean;
 }
@@ -59,9 +64,10 @@ export const OnboardingTooltip = function OnboardingTooltip<
 	children,
 	disableNext,
 	content,
+	uniqueKey,
 	ignoreOutsideInteraction,
 }: OnboardingTooltipProps<O>) {
-	const { show, next, isLast } = onboarding.useStep(step);
+	const { show, next, isLast } = onboarding.useStep(step, { uniqueKey });
 
 	// delay
 	const [delayedOpen, setDelayedOpen] = useState(false);
