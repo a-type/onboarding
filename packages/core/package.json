@@ -1,0 +1,37 @@
+{
+	"name": "@a-type/onboarding",
+	"type": "module",
+	"version": "1.0.0",
+	"description": "Minimal React state management for onboarding flows",
+	"exports": {
+		".": {
+			"development": "./src/index.ts",
+			"default": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		}
+	},
+	"publishConfig": {
+		"access": "public",
+		"exports": {
+			".": {
+				"default": "./dist/index.js",
+				"types": "./dist/index.d.ts"
+			}
+		}
+	},
+	"scripts": {
+		"build": "tsc",
+		"prepublishOnly": "pnpm run build"
+	},
+	"dependencies": {
+		"valtio": "catalog:"
+	},
+	"peerDependencies": {
+		"react": "^19"
+	},
+	"devDependencies": {
+		"react": "catalog:",
+		"@types/react": "catalog:",
+		"typescript": "catalog:"
+	}
+}
