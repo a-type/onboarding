@@ -22,7 +22,14 @@ export type Onboarding<Steps extends StringTuple> = {
 	useCancel: () => () => void;
 	begin: () => void;
 	skip: () => void;
+	next: () => void;
+	previous: () => void;
 	cancel: () => void;
+	/**
+	 * If the given step is active, this goes to the next step.
+	 * Otherwise does nothing.
+	 */
+	completeStep: (step: Steps[number]) => void;
 	readonly activeStep: Steps[number] | 'complete' | null;
 };
 
@@ -167,6 +174,32 @@ export function createOnboarding<Steps extends StringTuple>(
 		}, []);
 	}
 
+	function next() {
+		if (state.active === null) {
+			state.active = steps[0];
+		} else {
+			const index = steps.indexOf(state.active);
+			if (index === steps.length - 1) {
+				state.active = 'complete';
+			} else {
+				state.active = steps[index + 1];
+			}
+		}
+	}
+
+	function previous() {
+		if (state.active === null) {
+			state.active = steps[0];
+		} else {
+			const index = steps.indexOf(state.active);
+			if (index === 0) {
+				state.active = null;
+			} else {
+				state.active = steps[index - 1];
+			}
+		}
+	}
+
 	return {
 		useBegin,
 		useSkip,
@@ -182,6 +215,13 @@ export function createOnboarding<Steps extends StringTuple>(
 		},
 		cancel: () => {
 			state.active = null;
+		},
+		next,
+		previous,
+		completeStep: (step: Steps[number]) => {
+			if (state.active === step) {
+				next();
+			}
 		},
 		get activeStep() {
 			return state.active;

@@ -9,7 +9,7 @@ const firstTimeWelcome = createOnboarding(
 	// unique name for the flow
 	'firstTimeWelcome',
 	// string keys for each step
-	['hello', 'navigation', 'settings', 'firstPost'],
+	['hello', 'navigation', 'settings', 'firstPost'] as const,
 	// start immediately?
 	true,
 );
@@ -24,5 +24,8 @@ const cancel = firstTimeWelcome.useCancel();
 firstTimeWelcome.begin();
 firstTimeWelcome.skip();
 firstTimeWelcome.cancel();
+firstTimeWelcome.next();
+firstTimeWelcome.previous();
+firstTimeWelcome.completeStep('hello'); // only advances if the step is active
 firstTimeWelcome.activeStep; // one of your step strings, or "complete," or null (not started).
 ```
