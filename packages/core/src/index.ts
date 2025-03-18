@@ -17,6 +17,7 @@ export type Onboarding<Steps extends StringTuple> = {
 	begin: () => void;
 	skip: () => void;
 	cancel: () => void;
+	readonly activeStep: Steps[number] | 'complete' | null;
 };
 
 export function createOnboarding<Steps extends StringTuple>(
@@ -155,6 +156,9 @@ export function createOnboarding<Steps extends StringTuple>(
 		},
 		cancel: () => {
 			state.active = null;
+		},
+		get activeStep() {
+			return state.active;
 		},
 	};
 }

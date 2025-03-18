@@ -1,7 +1,7 @@
 {
 	"name": "@a-type/onboarding",
 	"type": "module",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Minimal React state management for onboarding flows",
 	"exports": {
 		".": {
